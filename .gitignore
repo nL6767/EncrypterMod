@@ -1,0 +1,39 @@
+# Gradle
+.gradle/
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# Java / Project files
+bin/
+classes/
+.classpath
+.project
+
+# Mac / Windows Junk
+.DS_Store
+Thumbs.db
+
+# Minecraft runtime (Fabric)
+run/
+remappedSrc/
+
+# Crash logs / profiling output
+hs_err_*.log
+replay_*.log
+*.hprof
+*.jfr
+# Secret keys (IMPORTANT!)
+*.key
+*.keys
+key.json
+secret*.json
+
+# Catch-all for configs in your mod’s folder
+config/encrypter/*.json
