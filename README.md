@@ -1,5 +1,5 @@
 # EncrypterMod v1.0.0
-**Description:** Client-side AES chat encryption for Minecraft. Encrypt messages for friends, send them with a unique ID, and decrypt them with the same key. Fully works on player chat[NotSecure] channel and system chat [SYSTEMCHAT] channel, which most servers have nowdays.
+**Description:** Client-side AES chat encryption for Minecraft. Encrypt messages for friends, send them with a unique ID, and decrypt them with the same key. Fully works on player chat[NotSecure] channel and system chat [SYSTEMCHAT] channel, which most servers have nowdays. Depends on fabricAPI.
 
 ---
 
@@ -13,6 +13,18 @@
 * Commands to send, decrypt, and view mod info
 * Fully client-side: no server modification required
 * Optional offline decryption using a Python/HTML tool
+
+---
+## **Offline Decryption Tool (HTML – No Install Needed)**
+If for some reason you do not want to download the mod to decrypt messages, you can use the Offline html tool privided inside Offline_Decryption_Folder.
+What to do? On github:
+1. Open Offline_Decryption_Folder.
+2. open decrypter_encrypter file inside the folder.
+3. then; you have 2 options now. Option A: Download the full html file (click 3 dots on the top right, download). Option B: Select full code, scan with any maliciousintentscanner, copypasta the code in a empty txt file on your desktop,save the file as .html NOT AS .txt)
+4. doubleclick encrypter_decrypter.html it should open the html tool inside your browser. 
+5. open minecraft logs and copypaste the full encryted message (ID:Playername_MessageUUID_EncryptedTEXT) inside the decrypter. DO not take a screenshot from minecraft ingame chat and use a tool like ImageToText Ai to retrieve the encrypted text + message uuid it will format it weirdly and not work correctly.
+6. enter the key from /minecraft/config/encrypter/key.json
+7. Done -> You can see the encrypted message from your friend without downloading the mod
 
 ---
 
@@ -80,13 +92,19 @@
 Users who do not want to run the mod can decrypt messages offline using:
 
 * **Python CLI script:** Paste encrypted message and key (not provided yet)
-* **HTML/JS tool:** Fully offline in browser (not provided yet)
 
-Example Python usage:
 
-```bash
-python decrypt_cli.py "EncryptedMessageHere" --key "1234567890abcdef1234567890abcdef"
-```
+* **HTML/JS tool:** Fully offline in browser -> Inside OfflineDecryption folder
+
+Offline Decryption Tool (HTML – No Install Needed)
+For users who prefer not to install the mod, EncrypterMod provides a fully offline, browser-based decrypter.
+You can use it to decrypt any message as long as you have correct AES key.
+The tool uses the browser’s built-in WebCrypto AES-GCM engine — the same algorithm used in the mod — ensuring full compatibility.
+Cross-platform (Windows, macOS, Linux)
+For players who want to decrypt messages without installing the mod
+
+File Location in Repository
+/tools/offline_decrypter.html
 
 ---
 
