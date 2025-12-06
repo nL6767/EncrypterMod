@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>EncrypterMod — Offline AES-GCM Encryptor</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  body{font-family:system-ui, -apple-system, "Segoe UI", Roboto, Arial;max-width:900px;margin:24px auto;padding:0 18px;color:#111}
+  label{display:block;margin-top:12px;font-weight:600}
+  input, textarea, select{width:100%;padding:8px;margin-top:6px;border-radius:6px;border:1px solid #ddd;box-sizing:border-box}
+  button{padding:10px 14px;border-radius:8px;border:0;background:#0b6efd;color:#fff;font-weight:600;cursor:pointer;margin-top:10px}
+  pre{background:#f6f8fa;padding:12px;border-radius:8px;overflow:auto;white-space:pre-wrap;word-break:break-word}
+  .row{display:flex;gap:10px}
+  .col{flex:1}
+  .note{color:#666;font-size:13px}
+</style>
+</head>
+<body>
+<h1>EncrypterMod — Offline AES-GCM Encryptor</h1>
+<p class="note">Encrypts plaintext into IV+ciphertext+tag blob compatible with the mod/decryptor. Works fully offline in the browser.</p>
+
+<label>Username (used in ID)</label>
+<input id="username" placeholder="yourname123">
+
+<label>Key format</label>
+<select id="keyFormat">
+  <option value="text">Raw text key (UTF-8) — paste exactly what's in config/key.json</option>
+  <option value="base64">Base64 key (URL-safe or normal)</option>
+</select>
+
+<label>Key</label>
+<input id="keyInput" type="password" placeholder="Paste AES key (raw text or base64)">
+
+<label>Message to encrypt</label>
+<textarea id="plaintext" rows="4" placeholder="Type message here..."></textarea>
+
+<div style="margin-top:10px">
+  <button id="genKey">Generate random 32-byte key (Base64)</button>
+  <button id="encryptBtn">Encrypt & Generate Chat Line</button>
+  <button id="clearBtn" style="background:#6c757d;margin-left:8px">Clear</button>
+</div>
+
+<div id="outputArea" style="margin-top:14px;display:none">
+  <label>Chat line (copy this into Minecraft chat)</label>
+  <pre id="outputPre"></pre>
+  <button id="copyBtn">Copy to clipboard</button>
+</div>
+
+<div class="note" style="margin-top:12px">
+  IMPORTANT: If your mod key in <code>config/encrypter/key.json</code> is a textual string like <code>1234567890abcdef1234567890abcdef</code>, choose <strong>Raw text key</strong> and paste that exact string. Do not paste screenshots / OCR text.
+</div>
+
+<script>
+/* helpers */
+function uint8ToBase64Url(uint8) {
+  // safe conversion -> use chunks to avoid call limit
+  let CHUNK = 0x8000;
+  let index = 0;
+  let result = '';
+  while (index < uint8.length) {
+    let slice = uint8.subarray(index, Math.min(index + CHUNK, uint8.length));
+    result += String.fromCharCode.apply(null, slice);
+    index += CHUNK;
+  }
+  let b64 = btoa(result);
+  return b64.replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function base64UrlToUint8(base64Url) {
+  let b64 = base64Url.replace(/-/g,'+').replace(/_/g,'/');
+  while (b64.length % 4 !== 0) b64 += '=';
+  const binary = atob(b64);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+  for (let i = 0; i < len; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+function hexToUint8(hex) {
+  hex = hex.replace(/\s+/g,'');
+  if (hex.length % 2 !== 0) throw new Error('Invalid hex length');
+  const arr = new Uint8Array(hex.length/2);
+  for (let i=0;i<hex.length;i+=2) arr[i/2] = parseInt(hex.substring(i,i+2),16);
+  return arr;
+}
+function uuidv4() {
+  // crypto-based v4
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{
+    const r = crypto.getRandomValues(new Uint8Array(1))[0] & 15;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+
+/* import key helpers */
+async function importKeyFromInput(keyStr, format) {
+  let keyBytes;
+  if (format === 'text') {
+    keyBytes = new TextEncoder().encode(keyStr);
+  } else { // base64
+    keyBytes = base64UrlToUint8(keyStr);
+  }
+  if (![16,24,32].includes(keyBytes.length)) {
+    throw new Error('Key must be 16, 24 or 32 bytes (after decoding). Found: ' + keyBytes.length);
+  }
+  return crypto.subtle.importKey('raw', keyBytes.buffer, {name:'AES-GCM'}, false, ['encrypt']);
+}
+
+/* main encrypt function */
+document.getElementById('encryptBtn').addEventListener('click', async () => {
+  try {
+    const username = document.getElementById('username').value.trim();
+    let keyStr = document.getElementById('keyInput').value.trim();
+    const format = document.getElementById('keyFormat').value;
+    let plaintext = document.getElementById('plaintext').value;
+    if (plaintext == null || plaintext.length === 0) throw new Error('Message empty');
+    if (!keyStr) throw new Error('No key provided');
+    if (!username) throw new Error('Provide username');
+
+    // import key
+    const keyObj = await importKeyFromInput(keyStr, format);
+
+    // create IV
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+
+    // encrypt (explicit tagLength)
+    const enc = new TextEncoder().encode(plaintext);
+    const cipherBuffer = await crypto.subtle.encrypt({name:'AES-GCM', iv:iv, tagLength:128}, keyObj, enc);
+    const cipherBytes = new Uint8Array(cipherBuffer);
+
+    // compose output IV + ciphertext+tag
+    const out = new Uint8Array(iv.length + cipherBytes.length);
+    out.set(iv, 0);
+    out.set(cipherBytes, iv.length);
+
+    const blob = uint8ToBase64Url(out);
+
+    const id = username + '_' + uuidv4();
+    const finalLine = `[EncrypterMod] [ID: ${id}] ${blob}`;
+
+    document.getElementById('outputPre').textContent = finalLine;
+    document.getElementById('outputArea').style.display = 'block';
+  } catch (e) {
+    alert('Error: ' + (e && e.message ? e.message : e));
+  }
+});
+
+/* copy/download/gen key */
+document.getElementById('copyBtn').addEventListener('click', async () => {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('outputPre').textContent);
+    alert('Copied!');
+  } catch {
+    alert('Clipboard copy failed — select the text and copy manually.');
+  }
+});
+document.getElementById('genKey').addEventListener('click', () => {
+  const rand = crypto.getRandomValues(new Uint8Array(32));
+  const b64 = uint8ToBase64Url(rand);
+  document.getElementById('keyFormat').value = 'base64';
+  document.getElementById('keyInput').value = b64;
+  alert('Generated 32-byte key (Base64). Use Raw text only if your mod uses printable ASCII key.');
+});
+document.getElementById('clearBtn').addEventListener('click', () => {
+  document.getElementById('plaintext').value = '';
+  document.getElementById('keyInput').value = '';
+  document.getElementById('username').value = '';
+  document.getElementById('outputArea').style.display = 'none';
+});
+</script>
+</body>
+</html>
