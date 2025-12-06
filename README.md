@@ -73,7 +73,7 @@ What to do? On github:
 
 * `ConfigHandler` handles loading and saving the AES key.
 * `KeyConfigHandler` reads/writes the key from `config/encrypter/key.json`.
-* Default key created if no config exists.
+* Default key created if no config exists. CHANGE KEY IMMEDIATELY AFTER LAUNCH, THEN RELAUNCH GAME WITH NEW KEY FOR BEST PRIVACY , currently ALL new users will get the same base key.
 
 ### **Message Flow**
 
