@@ -1,12 +1,12 @@
 # EncrypterMod v1.0.0
-**Description:** Client-side AES chat encryption for Minecraft. Encrypt messages for friends, send them with a unique ID, and decrypt them with the same key. Fully works on player chat[NotSecure] channel and system chat [SYSTEMCHAT] channel, which most servers have nowdays. Depends on fabricAPI.
+**Description:** Client-side AES chat encryption for Minecraft. Encrypt messages for friends, send them with a unique ID, and decrypt them with the same key. Fully works on player [NotSecure]Chat; channel and system chat [SYSTEM]Chat; channel, which most servers have nowdays. Depends on fabricAPI.
 
 ---
 
 ## **Features**
 
 * Secure AES-GCM encrypted chat messages for Minecraft anarchy servers.
-* works on almost any server. (still need testing) working servers: Constantiam, 2b2t, Oldfag, anarchy.ac, crystalpvp.cc, 6b6t, 9b9t
+* works on almost any server. (still need testing) working servers: Constantiam.net, Oldfag.org, anarchy.ac, crystalpvp.cc, 9b9t, DonutSMP, Qndres.net, V+
 * Unique message IDs for each sent message
 * Chat listener works for both player and system chat
 * Local storage of encrypted messages for decryption
@@ -61,6 +61,9 @@ What to do? On github:
 
 * `/encrypter decrypt <id>`
   Decrypts a previously received encrypted message stored locally.
+
+* `/encrypter toggleAutoDecrypt
+  Auto-Decrypts messages if you you have the same aes key like your friend(group)   
 
 ---
 
@@ -142,12 +145,32 @@ File Location in Repository
 
 ## **Future Improvements**
 
-* Secure key generation / Unique Per-user keys 32 bit
+* Secure key generation / Unique Per-user keys 32 bit (SOOONtm)
 * Offline message persistence
-* Click-to-copy encrypted messages (maybe)
 * Error reporting for key mismatches (maybe)
 
 ---
+
+## Development
+
+* **Build System:** Gradle
+* **IDE Support:** IntelliJ IDEA, Eclipse, VSCode
+* **Java Version:** Compatible with Java 21+
+
+
+## Credits & Shoutouts
+
+* **Main Testserver:**
+Constantiam.net, anarchy.ac (BANNED;TheBanhammerHasSpoken), Vanilla+(BANNED #inappropriateusername), Qndres.net(#BANid2016|BANNED;permanent,reason;bot)
+* **Tools & Assistance:** OpenAI ChatGPT for bugfixes/codeblock generation
+
+---
+
+## Privacy & Safety
+
+* No IPs or sensitive data is tracked.
+* All configuration data (AES-Key) is stored locally. You must always change your key if you feel like you re being insided.
+* If you do not want to download this jar. you can make your own Encryption/Decryption HTML tool (Fully Offline btw zero chance of getting hacked) by first checking the code, then make your OWN html file on PC.
 
 ## **License**
 
