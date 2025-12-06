@@ -15,20 +15,30 @@
 * Optional offline decryption using a Python/HTML tool
 
 ---
-## **Offline Decryption Tool (HTML – No Install Needed)**
+# Offline Encryption/Decryption tools fully HTML NO DOWNLOAD OF JAR NEEDED
+
+## **Offline Decryption Tool (HTML – No install needed)**
 If for some reason you do not want to download the mod to decrypt messages, you can use the Offline html tool privided inside Offline_Decryption_Folder.
 What to do? On github:
 1. Open Offline_Decryption_Folder.
 2. open decrypter_encrypter file inside the folder.
-3. then; you have 2 options now. Option A: Download the full html file (click 3 dots on the top right, download). Option B: Select full code, scan with any maliciousintentscanner, copypasta the code in a empty txt file on your desktop,save the file as .html NOT AS .txt)
+3. then; you have 2 options now. Option A: Download the full html file (click 3 dots on the top right, download). Option B: Select full code, scan with any maliciousintentscanner, copypasta the code in a empty txt file on your desktop,save the file as .html NOT AS .txt You need to select the option "save as '.*' instead of .txt
 4. doubleclick encrypter_decrypter.html it should open the html tool inside your browser. 
 5. open minecraft logs and copypaste the full encryted message (ID:Playername_MessageUUID_EncryptedTEXT) inside the decrypter. DO not take a screenshot from minecraft ingame chat and use a tool like ImageToText Ai to retrieve the encrypted text + message uuid it will format it weirdly and not work correctly.
 6. enter the key from /minecraft/config/encrypter/key.json
-7. Done -> You can see the encrypted message from your friend without downloading the mod
+7. Done -> You can see the encrypted message from your friend without downloading the jar.
 
 ---
+## **Offline Encryption Tool (HTML - No install needed)
+1. Open Offline_Encrypter_Folder.
+2. open encrypter_encrypter file inside the folder.
+3. then; you have 2 options now. Option A: Download the full html file (click 3 dots on the top right, download). Option B: Select full code, scan with any maliciousintentscanner, copypasta the code in a empty txt file on your desktop,save the file as .html NOT AS .txt You need to select the option "save as '.*' instead of .txt
+4. doubleclick encrypter_encrypter.html it should open the html tool inside your browser. 
+5. Enter; username, shared aes-key >Raw text key (UTF-8) — paste exactly what's in config/key.json< (same as your friends), and your message.
+6. Click on "Encrypt and generate chatline" 
+7. Done -> You can copy paste the ID_username_UUID + Encrypted message in your Minecraft chat now for your friend to decode without downloading the jar.
 
-## **Installation**
+## **Installation for the actual Mod**
 
 1. Place the mod `.jar` in your `mods` folder for your Minecraft Fabric client.
 2. Start Minecraft with Fabric.
